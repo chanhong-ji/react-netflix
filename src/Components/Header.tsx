@@ -1,10 +1,5 @@
-import {
-  motion,
-  useTransform,
-  useViewportScroll,
-  useAnimation,
-} from "framer-motion";
-import { useState } from "react";
+import { motion, useViewportScroll, useAnimation } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
@@ -19,6 +14,15 @@ const Nav = styled(motion.nav)`
   padding: 20px 60px;
   color: white;
 `;
+
+const navVariants = {
+  top: {
+    backgroundColor: "rgba(0, 0, 0, 0)",
+  },
+  scroll: {
+    backgroundColor: "rgba(0, 0, 0, 1)",
+  },
+};
 
 const Column = styled.div`
   display: flex;
@@ -105,13 +109,9 @@ function Header() {
   const [searchClicked, setSearchClicked] = useState(false);
   const homeMatch = useRouteMatch("/");
   const tvMatch = useRouteMatch("/tv");
-  const { scrollYProgress } = useViewportScroll();
+  const { scrollY } = useViewportScroll();
   const inputAnimation = useAnimation();
-  const headerColor = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ["#181818", "#E51013"]
-  );
+  const navAnimation = useAnimation();
 
   const toggleSearch = () => {
     if (searchClicked) {
@@ -124,8 +124,18 @@ function Header() {
     setSearchClicked((prev) => !prev);
   };
 
+  useEffect(() => {
+    scrollY.onChange(() => {
+      if (scrollY.get() < 80) {
+        navAnimation.start("top");
+      } else {
+        navAnimation.start("scroll");
+      }
+    });
+  }, [scrollY, navAnimation]);
+
   return (
-    <Nav style={{ backgroundColor: headerColor }}>
+    <Nav variants={navVariants} animate={navAnimation} initial="top">
       <Column>
         <Logo
           variants={logoVariant}

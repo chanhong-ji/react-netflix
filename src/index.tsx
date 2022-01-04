@@ -67,7 +67,10 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   line-height: 1.2;
   background-color: black;
-  color: ${(props) => props.theme.white.darker}
+  color: ${(props) => props.theme.white.darker};
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
 a {
   text-decoration:none;

@@ -67,6 +67,7 @@ const Row = styled(motion.div)`
   grid-template-columns: repeat(6, 1fr);
   position: absolute;
   width: 100%;
+  height: 200px;
 `;
 
 const rowVariants = {
@@ -75,13 +76,47 @@ const rowVariants = {
   exit: { x: -window.outerWidth - 5 },
 };
 
-const Box = styled.div<{ bgPhoto: string }>`
-  height: 200px;
+const Box = styled(motion.div)`
   font-size: 10px;
-  background-image: url(${(props) => props.bgPhoto});
-  background-size: cover;
-  background-position: center;
+  text-align: center;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
 `;
+
+const boxVariants = {
+  normal: { scale: 1 },
+  hover: {
+    scale: 1.3,
+    y: -80,
+    transition: { delay: 0.5, duration: 0.2, type: "tween" },
+  },
+};
+
+const Info = styled(motion.div)`
+  width: 100%;
+  height: 50px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
+`;
+
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: { delay: 0.5, duration: 0.2, type: "tween" },
+  },
+};
 
 let offset = 6;
 
@@ -134,8 +169,19 @@ function Home() {
                   .map((movie) => (
                     <Box
                       key={movie.id}
-                      bgPhoto={makeImgPath(movie.backdrop_path, "w500")}
-                    />
+                      variants={boxVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
+                    >
+                      <img
+                        src={makeImgPath(movie.backdrop_path, "w500")}
+                        alt=""
+                      />
+                      <Info variants={infoVariants}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
                   ))}
               </Row>
             </AnimatePresence>
